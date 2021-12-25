@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Server.Collections;
 using Server.ContextMenus;
 using Server.Engines.ConPVP;
+using Server.Engines.KillCounter;
 using Server.Engines.MLQuests;
 using Server.Engines.Quests.Doom;
 using Server.Engines.Quests.Haven;
@@ -3330,6 +3331,13 @@ namespace Server.Mobiles
 
                     if (ds.m_Mobile is PlayerMobile pm)
                     {
+
+
+                        KillCounterSystem.IncrementKills(pm, this);
+                        //debug
+                        pm.SendMessage($"Killed {Name}: {KillCounterSystem.GetKills(pm, this)} times");
+
+
                         if (MLQuestSystem.Enabled)
                         {
                             MLQuestSystem.HandleKill(pm, this);
