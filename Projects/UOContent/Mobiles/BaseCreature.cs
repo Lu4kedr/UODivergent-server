@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Server.Collections;
 using Server.ContextMenus;
 using Server.Engines.ConPVP;
+using Server.Engines.LevelSystem.Core;
 using Server.Engines.MLQuests;
 using Server.Engines.Quests.Doom;
 using Server.Engines.Quests.Haven;
@@ -152,7 +153,7 @@ namespace Server.Mobiles
         }
     }
 
-    public class BaseCreature : Mobile, IHonorTarget, IQuestGiver
+    public class BaseCreature : Mobile, IHonorTarget, IQuestGiver, IExperienceHolder
     {
         public enum Allegiance
         {
@@ -1178,6 +1179,10 @@ namespace Server.Mobiles
             }
         }
 
+        public int Level { get; set; }
+        public int Experiences { get; set; }
+        public int ExperiencesMax { get; set; }
+
         public virtual WeaponAbility GetWeaponAbility() => null;
 
         public virtual bool IsEnemy(Mobile m)
@@ -1678,7 +1683,7 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(19); // version
+            writer.Write(20); // version
 
             writer.Write((int)m_CurrentAI);
             writer.Write((int)m_DefaultAI);
@@ -1810,6 +1815,11 @@ namespace Server.Mobiles
 
             // Version 19
             writer.Write(HomeMap);
+
+            //Version 20
+            writer.Write(Level);
+            writer.Write(Experiences);
+            writer.Write(ExperiencesMax);
         }
 
         public override void Deserialize(IGenericReader reader)
@@ -2084,6 +2094,14 @@ namespace Server.Mobiles
             {
                 NameHue = -1;
             }
+
+            if (version >= 20)
+            {
+                Level = reader.ReadInt();
+                Experiences = reader.ReadInt();
+                ExperiencesMax = reader.ReadInt();
+            }
+
 
             CheckStatTimers();
 
