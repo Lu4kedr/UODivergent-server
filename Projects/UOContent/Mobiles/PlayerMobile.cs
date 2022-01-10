@@ -340,6 +340,7 @@ namespace Server.Mobiles
         public List<Mobile> PermaFlags { get; private set; }
 
         public override int Luck => AosAttributes.GetValue(this, AosAttribute.Luck);
+        public override int BaseColdResistance => 40;
 
         public BOBFilter BOBFilter { get; private set; }
 
@@ -1214,7 +1215,7 @@ namespace Server.Mobiles
         public override int GetMinResistance(ResistanceType type)
         {
             var magicResist = (int)(Skills.MagicResist.Value * 10);
-            int min;
+            int min; // edit min resistance
 
             if (magicResist >= 1000)
             {
