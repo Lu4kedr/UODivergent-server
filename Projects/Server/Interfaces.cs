@@ -21,9 +21,12 @@ namespace Server
     public interface IWeapon
     {
         int MaxRange { get; }
-        void OnBeforeSwing(Mobile attacker, Mobile defender);
+        float Speed { get; }
+        bool IsRanged { get; }
+        TimeSpan OnBeforeSwing(Mobile attacker, Mobile defender);
         TimeSpan OnSwing(Mobile attacker, Mobile defender, double damageBonus = 1.0);
         void GetStatusDamage(Mobile from, out int min, out int max);
+        void PlaySwingAnimation(Mobile from);
     }
 
     public interface IHued

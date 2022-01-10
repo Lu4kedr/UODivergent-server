@@ -22,7 +22,9 @@ namespace Server.Items
 
         public BaseRanged(int itemID) : base(itemID)
         {
+
         }
+        public override bool IsRanged => true;
 
         public abstract int EffectID { get; }
         public abstract Type AmmoType { get; }
@@ -36,13 +38,27 @@ namespace Server.Items
         public override WeaponAnimation DefAnimation => WeaponAnimation.ShootXBow;
 
         public override SkillName AccuracySkill => SkillName.Archery;
+        public override TimeSpan OnBeforeSwing(Mobile attacker, Mobile defender)
+        {
 
+                if (WeaponAbility.GetCurrentAbility(attacker)?.OnBeforeSwing(attacker, defender) == false)
+                {
+                    WeaponAbility.ClearCurrentAbility(attacker);
+                }
+
+                if (SpecialMove.GetCurrentMove(attacker)?.OnBeforeSwing(attacker, defender) == false)
+                {
+                    SpecialMove.ClearCurrentMove(attacker);
+                }
+
+                return GetDelay(attacker) - TimeSpan.FromSeconds(1);
+        }
         public override TimeSpan OnSwing(Mobile attacker, Mobile defender, double damageBonus = 1.0)
         {
             // WeaponAbility a = WeaponAbility.GetCurrentAbility( attacker );
 
             // Make sure we've been standing still for .25/.5/1 second depending on Era
-            if (Core.TickCount - attacker.LastMoveTime >= (Core.SE ? 250 : Core.AOS ? 500 : 1000) ||
+            if (Core.TickCount - attacker.LastMoveTime >= TimeSpan.FromSeconds(Speed - 1).TotalMilliseconds ||
                 Core.AOS && WeaponAbility.GetCurrentAbility(attacker) is MovingShot)
             {
                 var canSwing = true;
@@ -79,14 +95,13 @@ namespace Server.Items
                         }
                     }
                 }
-
                 attacker.RevealingAction();
-
-                return GetDelay(attacker);
+                //return;
+                return TimeSpan.FromSeconds(1); //GetDelay(attacker);
             }
 
             attacker.RevealingAction();
-
+            //return GetDelay(attacker);
             return TimeSpan.FromSeconds(0.25);
         }
 
@@ -196,5 +211,7 @@ namespace Server.Items
 
             return true;
         }
+
+
     }
 }

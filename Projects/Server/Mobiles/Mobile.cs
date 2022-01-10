@@ -939,10 +939,21 @@ namespace Server
             }
         }
 
+        private bool BeforeSwingActive { get; set; } = false;
+        private long BeforeSwingLastMove { get; set; }
+        private bool SwingAnimationReady { get; set; } = true;
         private void CheckCombatTime()
         {
+            var weapon = Weapon;
             if (Core.TickCount - NextCombatTime < 0)
             {
+                if (BeforeSwingActive && weapon.IsRanged && BeforeSwingLastMove != LastMoveTime && Core.TickCount - LastMoveTime < TimeSpan.FromSeconds(weapon.Speed - 1).TotalMilliseconds)
+                {
+                    SendAsciiMessage("Reset");
+                    BeforeSwingActive = false;
+                    SwingAnimationReady = false;
+                    NextCombatTime = Core.TickCount + 250;
+                }
                 return;
             }
 
@@ -957,7 +968,6 @@ namespace Server
                 return;
             }
 
-            var weapon = Weapon;
 
             if (!InRange(combatant, weapon.MaxRange))
             {
@@ -966,10 +976,37 @@ namespace Server
 
             if (InLOS(combatant))
             {
-                weapon.OnBeforeSwing(this, combatant);
-                RevealingAction();
-                NextCombatTime =
-                    Core.TickCount + (int)weapon.OnSwing(this, combatant).TotalMilliseconds;
+                if (!BeforeSwingActive)
+                {
+                    BeforeSwingActive = true;
+                    //NetState?.SendSwing(Serial, combatant.Serial);
+                    BeforeSwingLastMove = LastMoveTime;
+                    var delay = (int)weapon.OnBeforeSwing(this, combatant).TotalMilliseconds;
+                    NextCombatTime = Core.TickCount + delay;
+                    SendAsciiMessage($"start hit in {delay}");
+                    RevealingAction();
+                    SwingAnimationReady = true;
+                    return;
+                }
+
+
+                if (BeforeSwingActive && Core.TickCount - NextCombatTime >= 0)
+                {
+                    if (SwingAnimationReady)
+                    {
+                        SwingAnimationReady = false;
+                        weapon.PlaySwingAnimation(this);
+                        NextCombatTime = Core.TickCount + 1000;
+                        SendAsciiMessage($"hit in {1000}");
+                        return;
+                    }
+                    SendAsciiMessage("hit");
+                    //weapon.OnSwing(this, combatant);
+                    var delay = (int)weapon.OnSwing(this, combatant).TotalMilliseconds;
+                    NextCombatTime = Core.TickCount + delay;
+                    BeforeSwingActive = false;
+                }
+
             }
         }
 

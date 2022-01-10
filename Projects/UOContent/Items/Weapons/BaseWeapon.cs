@@ -387,6 +387,8 @@ namespace Server.Items
             }
         }
 
+        public virtual bool IsRanged => false;
+
         [CommandProperty(AccessLevel.GameMaster)]
         public int StrRequirement
         {
@@ -682,8 +684,12 @@ namespace Server.Items
             }
         }
 
-        public virtual void OnBeforeSwing(Mobile attacker, Mobile defender)
+
+
+        public virtual TimeSpan OnBeforeSwing(Mobile attacker, Mobile defender)
         {
+
+            //PlaySwingAnimation(attacker);
             if (WeaponAbility.GetCurrentAbility(attacker)?.OnBeforeSwing(attacker, defender) == false)
             {
                 WeaponAbility.ClearCurrentAbility(attacker);
@@ -693,6 +699,8 @@ namespace Server.Items
             {
                 SpecialMove.ClearCurrentMove(attacker);
             }
+
+            return GetDelay(attacker) - TimeSpan.FromSeconds(1);
         }
 
         public virtual void GetStatusDamage(Mobile from, out int min, out int max)
@@ -739,8 +747,7 @@ namespace Server.Items
             {
                 attacker.DisruptiveAction();
 
-                attacker.NetState?.SendSwing(attacker.Serial, defender.Serial);
-
+                //attacker.NetState?.SendSwing(attacker.Serial, defender.Serial);
                 if (attacker is BaseCreature bc)
                 {
                     var ab = bc.GetWeaponAbility();
@@ -766,9 +773,10 @@ namespace Server.Items
                 {
                     OnMiss(attacker, defender);
                 }
-            }
 
-            return GetDelay(attacker);
+            }
+            //return;
+            return TimeSpan.FromSeconds(1);//GetDelay(attacker);
         }
 
         [CommandProperty(AccessLevel.GameMaster)]
@@ -1636,7 +1644,7 @@ namespace Server.Items
                 eable.Free();
             }
 
-            PlaySwingAnimation(attacker);
+            //PlaySwingAnimation(attacker);
             PlayHurtAnimation(defender);
 
             attacker.PlaySound(GetHitAttackSound(attacker, defender));
@@ -2300,7 +2308,7 @@ namespace Server.Items
 
         public virtual void OnMiss(Mobile attacker, Mobile defender)
         {
-            PlaySwingAnimation(attacker);
+            //PlaySwingAnimation(attacker);
             attacker.PlaySound(GetMissAttackSound(attacker, defender));
             defender.PlaySound(GetMissDefendSound(attacker, defender));
 
