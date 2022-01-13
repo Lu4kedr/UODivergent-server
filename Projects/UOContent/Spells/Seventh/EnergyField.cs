@@ -140,13 +140,14 @@ namespace Server.Spells.Seventh
 
             public override bool OnMoveOver(Mobile m)
             {
-                if (m is not PlayerMobile)
-                {
-                    return base.OnMoveOver(m);
-                }
-
-                var noto = Notoriety.Compute(m_Caster, m);
-                return noto != Notoriety.Enemy && noto != Notoriety.Ally && base.OnMoveOver(m);
+                return false;
+                //if (m is not PlayerMobile)
+                //{
+                //    return base.OnMoveOver(m);
+                //}
+                ////return false;
+                //var noto = Notoriety.Compute(m_Caster, m);
+                //return noto != Notoriety.Enemy && noto != Notoriety.Ally && base.OnMoveOver(m);
             }
 
             public override void OnAfterDelete()
