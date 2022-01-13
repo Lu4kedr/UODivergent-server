@@ -25,6 +25,8 @@ namespace Server.Spells.Seventh
 
         public override SpellCircle Circle => SpellCircle.Seventh;
 
+        public override bool BlocksMovement => false;
+
         public void Target(IPoint3D p)
         {
             if (SpellHelper.CheckTown(p, Caster) && CheckSequence())
