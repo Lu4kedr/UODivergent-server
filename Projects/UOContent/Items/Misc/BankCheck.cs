@@ -74,15 +74,15 @@ namespace Server.Items
             base.GetProperties(list);
 
             string worth;
+            worth = m_Worth.ToString();
 
-            if (Core.ML)
-            {
-                worth = m_Worth.ToString("N0", CultureInfo.GetCultureInfo("en-US"));
-            }
-            else
-            {
-                worth = m_Worth.ToString();
-            }
+            //if (Core.ML)
+            //{
+            //    worth = m_Worth.ToString("N0", CultureInfo.GetCultureInfo("en-US"));
+            //}
+            //else
+            //{
+            //}
 
             list.Add(1060738, worth); // value: ~1_val~
         }
