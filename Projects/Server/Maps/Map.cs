@@ -1420,6 +1420,7 @@ namespace Server
                     var point = path[j];
                     var pointTop = point.m_Z + 1;
                     var loc = i.Location;
+                    loc.m_Z += 14;
 
                     // if (t.Z <= point.Z && t.Z+height >= point.Z && ( height != 0 || ( t.Z == dest.Z && zd != 0 ) ))
                     if (loc.m_X == point.m_X && loc.m_Y == point.m_Y && loc.m_Z <= pointTop && loc.m_Z + height >= point.m_Z)
