@@ -52,7 +52,12 @@ namespace Server.Spells.Seventh
                 m.FixedParticles(0x3709, 10, 30, 5052, EffectLayer.LeftFoot);
                 m.PlaySound(0x208);
 
-                SpellHelper.Damage(this, m, damage, 0, 100, 0, 0, 0);
+                if (Caster.InLOS(m))
+                {
+                    SpellHelper.Damage(this, m, damage, 0, 100, 0, 0, 0);
+                    return;
+                }
+                Caster.SendLocalizedMessage(501783,hue: 241);
             }
 
             FinishSequence();
