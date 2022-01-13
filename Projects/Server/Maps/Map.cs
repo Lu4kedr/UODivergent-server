@@ -1373,7 +1373,7 @@ namespace Server
                     flags = id.Flags;
                     height = id.CalcHeight;
 
-                    if (t.Z <= pointTop && t.Z + height >= point.Z && (flags & (TileFlag.Window | TileFlag.NoShoot)) != 0)
+                    if (t.Z <= pointTop && t.Z + height >= point.Z && (flags & (TileFlag.Window | TileFlag.NoShoot | TileFlag.Impassable)) != 0)
                     {
                         if (point.m_X == end.m_X && point.m_Y == end.m_Y && t.Z <= endTop && t.Z + height >= end.m_Z)
                         {
